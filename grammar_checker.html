@@ -51,6 +51,41 @@
             padding: 2.5rem;
             backdrop-filter: blur(16px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: -1rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .ui-lang-switcher {
+            display: flex;
+            background: rgba(10, 12, 16, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2px;
+        }
+
+        .ui-lang-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 18px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .ui-lang-btn.active {
+            background: var(--accent-color);
+            color: white;
         }
 
         header {
@@ -299,9 +334,17 @@
 <body>
 
     <div class="container">
+        <!-- Top bar for UI Language Switcher -->
+        <div class="top-bar">
+            <div class="ui-lang-switcher">
+                <button class="ui-lang-btn active" data-ui-lang="id">ID</button>
+                <button class="ui-lang-btn" data-ui-lang="en">EN</button>
+            </div>
+        </div>
+
         <header>
-            <h1>Pembedah Grammar</h1>
-            <p class="subtitle">Tulis teks Anda di bawah untuk memeriksa ejaan dan struktur tata bahasa secara gratis.</p>
+            <h1 id="uiTitle">Pembedah Grammar</h1>
+            <p class="subtitle" id="uiSubtitle">Tulis teks Anda di bawah untuk memeriksa ejaan dan struktur tata bahasa secara gratis.</p>
         </header>
 
         <div class="checker-section">
@@ -311,9 +354,9 @@
 
             <div class="controls">
                 <select id="langSelect" class="lang-select">
-                    <option value="auto">Deteksi Otomatis</option>
-                    <option value="en-US">Bahasa Inggris (US)</option>
-                    <option value="id">Bahasa Indonesia</option>
+                    <option value="auto" id="optAuto">Deteksi Otomatis</option>
+                    <option value="en-US" id="optEn">Bahasa Inggris (US)</option>
+                    <option value="id" id="optId">Bahasa Indonesia</option>
                 </select>
                 
                 <button id="checkBtn" class="btn">
@@ -326,7 +369,8 @@
         <div class="results-box" id="resultsBox">
             <div class="results-header">
                 <div class="results-title">
-                    Hasil Analisis <span id="errorBadge" class="badge">0 Masalah</span>
+                    <span id="uiResultsTitle">Hasil Analisis</span> 
+                    <span id="errorBadge" class="badge">0 Masalah</span>
                 </div>
                 <button id="fixAllBtn" class="btn" style="background: var(--success-color); font-size: 0.85rem; padding: 0.5rem 1rem; display: none;">
                     Perbaiki Semua
@@ -341,11 +385,52 @@
         </div>
     </div>
 
-    <footer>
+    <footer id="uiFooter">
         Didukung secara gratis oleh <a href="https://languagetool.org" target="_blank" rel="noopener noreferrer">LanguageTool API</a>
     </footer>
 
     <script>
+        // Language Dictionaries for UI Translation
+        const translations = {
+            id: {
+                title: "Pembedah Grammar",
+                subtitle: "Tulis teks Anda di bawah untuk memeriksa ejaan dan struktur tata bahasa secara gratis.",
+                placeholder: "Masukkan teks Anda di sini (dalam Bahasa Inggris, Indonesia, dll)...",
+                optAuto: "Deteksi Otomatis",
+                optEn: "Bahasa Inggris (US)",
+                optId: "Bahasa Indonesia",
+                btnCheck: "Periksa Teks",
+                btnChecking: "Memeriksa...",
+                resultsTitle: "Hasil Analisis",
+                btnFixAll: "Perbaiki Semua",
+                footer: 'Didukung secara gratis oleh <a href="https://languagetool.org" target="_blank" rel="noopener noreferrer">LanguageTool API</a>',
+                issueBadge: "Masalah",
+                perfectBadge: "Sempurna!",
+                noIssues: "Tidak ditemukan kesalahan tata bahasa atau ejaan!",
+                labelWrong: "Salah: "
+            },
+            en: {
+                title: "Grammar Analyzer",
+                subtitle: "Write your text below to check spelling and grammar structure for free.",
+                placeholder: "Enter your text here (in English, Indonesian, etc)...",
+                optAuto: "Auto Detect",
+                optEn: "English (US)",
+                optId: "Indonesian",
+                btnCheck: "Check Text",
+                btnChecking: "Checking...",
+                resultsTitle: "Analysis Results",
+                btnFixAll: "Fix All",
+                footer: 'Powered for free by <a href="https://languagetool.org" target="_blank" rel="noopener noreferrer">LanguageTool API</a>',
+                issueBadge: "Issues",
+                perfectBadge: "Perfect!",
+                noIssues: "No spelling or grammar errors found!",
+                labelWrong: "Wrong: "
+            }
+        };
+
+        let currentUiLang = 'id';
+        let currentMatches = [];
+
         const textInput = document.getElementById('textInput');
         const langSelect = document.getElementById('langSelect');
         const checkBtn = document.getElementById('checkBtn');
@@ -357,8 +442,57 @@
         const suggestionsList = document.getElementById('suggestionsList');
         const fixAllBtn = document.getElementById('fixAllBtn');
 
-        let currentMatches = [];
+        // UI Translation elements
+        const uiTitle = document.getElementById('uiTitle');
+        const uiSubtitle = document.getElementById('uiSubtitle');
+        const optAuto = document.getElementById('optAuto');
+        const optEn = document.getElementById('optEn');
+        const optId = document.getElementById('optId');
+        const uiResultsTitle = document.getElementById('uiResultsTitle');
+        const uiFooter = document.getElementById('uiFooter');
 
+        // Translate UI Elements
+        function translateUI(lang) {
+            currentUiLang = lang;
+            const dict = translations[lang];
+
+            uiTitle.textContent = dict.title;
+            uiSubtitle.textContent = dict.subtitle;
+            textInput.placeholder = dict.placeholder;
+            optAuto.textContent = dict.optAuto;
+            optEn.textContent = dict.optEn;
+            optId.textContent = dict.optId;
+            uiResultsTitle.textContent = dict.resultsTitle;
+            fixAllBtn.textContent = dict.btnFixAll;
+            uiFooter.innerHTML = dict.footer;
+
+            if (checkBtn.disabled) {
+                btnText.textContent = dict.btnChecking;
+            } else {
+                btnText.textContent = dict.btnCheck;
+            }
+
+            // Re-render results if already exists
+            if (resultsBox.style.display === 'block') {
+                displayResults(textInput.value, currentMatches);
+            }
+        }
+
+        // Language Switcher Toggle Buttons
+        const switcherBtns = document.querySelectorAll('[data-ui-lang]');
+        switcherBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                switcherBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const selectedLang = btn.getAttribute('data-ui-lang');
+                translateUI(selectedLang);
+            });
+        });
+
+        // Initialize default UI Language
+        translateUI('id');
+
+        // Grammar Checking API Call
         checkBtn.addEventListener('click', async () => {
             const text = textInput.value.trim();
             if (!text) return;
@@ -366,7 +500,7 @@
             // Show loading state
             checkBtn.disabled = true;
             spinner.style.display = 'block';
-            btnText.textContent = 'Memeriksa...';
+            btnText.textContent = translations[currentUiLang].btnChecking;
             resultsBox.style.display = 'none';
 
             try {
@@ -387,29 +521,30 @@
 
             } catch (error) {
                 console.error('Error checking grammar:', error);
-                alert('Gagal menghubungi server pengecek tata bahasa. Silakan coba lagi.');
+                alert(currentUiLang === 'id' ? 'Gagal menghubungi server pengecek tata bahasa.' : 'Failed to reach the grammar checking server.');
             } finally {
                 // Restore button state
                 checkBtn.disabled = false;
                 spinner.style.display = 'none';
-                btnText.textContent = 'Periksa Teks';
+                btnText.textContent = translations[currentUiLang].btnCheck;
             }
         });
 
         function displayResults(originalText, matches) {
             resultsBox.style.display = 'block';
             suggestionsList.innerHTML = '';
+            const dict = translations[currentUiLang];
             
             if (matches.length === 0) {
-                errorBadge.textContent = 'Sempurna!';
+                errorBadge.textContent = dict.perfectBadge;
                 errorBadge.className = 'badge clean';
                 highlightedText.textContent = originalText;
-                suggestionsList.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Tidak ditemukan kesalahan tata bahasa atau ejaan!</p>';
+                suggestionsList.innerHTML = `<p style="text-align: center; color: var(--text-secondary);">${dict.noIssues}</p>`;
                 fixAllBtn.style.display = 'none';
                 return;
             }
 
-            errorBadge.textContent = `${matches.length} Masalah`;
+            errorBadge.textContent = `${matches.length} ${dict.issueBadge}`;
             errorBadge.className = 'badge';
             
             // Highlight text errors
@@ -447,10 +582,11 @@
         function createSuggestionCard(match, idx, originalWord) {
             const card = document.createElement('div');
             card.className = 'suggestion-card';
+            const dict = translations[currentUiLang];
 
             const context = document.createElement('div');
             context.className = 'suggestion-context';
-            context.innerHTML = `Salah: <span>${escapeHtml(originalWord)}</span>`;
+            context.innerHTML = `${dict.labelWrong}<span>${escapeHtml(originalWord)}</span>`;
             card.appendChild(context);
 
             const desc = document.createElement('div');
