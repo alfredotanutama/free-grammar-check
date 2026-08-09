@@ -1,3 +1,3 @@
 # Folder agy
 
-Folder ini dibuat secara otomatis oleh asisten coding Antigravity.
+Folder ini digunakan untuk menyimpan asisten pemrograman mandiri.
