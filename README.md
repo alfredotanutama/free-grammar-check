@@ -16,6 +16,16 @@ A lightweight, instant, and high-performance English grammar and spelling analyz
 - **Free & Secure**: Powered by the public LanguageTool API, requiring no API registration, keys, or complex server setup.
 - **Premium Aesthetics**: Crafted using a modern dark palette, Plus Jakarta Sans typography, and smooth, responsive interactive micro-animations.
 
+## 🛠️ Tech Stack & Languages Used
+
+This project is built using vanilla, lightweight web technologies to ensure zero dependency footprint and fast load times:
+
+- **HTML5**: Structured markup for the main application interface.
+- **CSS3 (Vanilla)**: Premium dark-theme custom design, glassmorphic effects, responsive layout grids, and animations.
+- **JavaScript (ES6+)**: Custom client-side logic handling the UI language localization and asynchronous LanguageTool API integration.
+- **Third-Party Service**: [LanguageTool API](https://languagetool.org) (External REST API endpoint used for processing English grammar analysis).
+- **Typography**: [Google Fonts](https://fonts.google.com/) (Plus Jakarta Sans).
+
 ## 🛠️ How to Use
 
 ### 1. Locally (Simple Web Browser)
