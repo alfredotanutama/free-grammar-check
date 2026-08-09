@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembedah Grammar - Gratis & Instan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d0f12;
+            --card-bg: rgba(20, 24, 33, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent-color: #6366f1;
+            --accent-hover: #4f46e5;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --warning-color: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 40%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2.5rem;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .checker-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .textarea-container {
+            position: relative;
+            width: 100%;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            background: rgba(10, 12, 16, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.2rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .lang-select {
+            background: rgba(10, 12, 16, 0.8);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            font-family: inherit;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            background: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.5;
+        }
+
+        .results-box {
+            display: none;
+            margin-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+
+        .results-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--error-color);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .badge.clean {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success-color);
+        }
+
+        .highlighted-text {
+            background: rgba(10, 12, 16, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.2rem;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            white-space: pre-wrap;
+        }
+
+        .error-mark {
+            background-color: rgba(239, 68, 68, 0.25);
+            border-bottom: 2px dashed var(--error-color);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            position: relative;
+        }
+
+        .error-mark:hover {
+            background-color: rgba(239, 68, 68, 0.4);
+        }
+
+        .suggestions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .suggestion-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .suggestion-context {
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .suggestion-context span {
+            color: var(--error-color);
+            text-decoration: line-through;
+        }
+
+        .suggestion-replacements {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.2rem;
+        }
+
+        .replacement-btn {
+            background: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .replacement-btn:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .suggestion-description {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        footer {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Pembedah Grammar</h1>
+            <p class="subtitle">Tulis teks Anda di bawah untuk memeriksa ejaan dan struktur tata bahasa secara gratis.</p>
+        </header>
+
+        <div class="checker-section">
+            <div class="textarea-container">
+                <textarea id="textInput" placeholder="Masukkan teks Anda di sini (dalam Bahasa Inggris, Indonesia, dll)..."></textarea>
+            </div>
+
+            <div class="controls">
+                <select id="langSelect" class="lang-select">
+                    <option value="auto">Deteksi Otomatis</option>
+                    <option value="en-US">Bahasa Inggris (US)</option>
+                    <option value="id">Bahasa Indonesia</option>
+                </select>
+                
+                <button id="checkBtn" class="btn">
+                    <span class="loading-spinner" id="spinner"></span>
+                    <span id="btnText">Periksa Teks</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="results-box" id="resultsBox">
+            <div class="results-header">
+                <div class="results-title">
+                    Hasil Analisis <span id="errorBadge" class="badge">0 Masalah</span>
+                </div>
+                <button id="fixAllBtn" class="btn" style="background: var(--success-color); font-size: 0.85rem; padding: 0.5rem 1rem; display: none;">
+                    Perbaiki Semua
+                </button>
+            </div>
+
+            <div class="highlighted-text" id="highlightedText"></div>
+
+            <div class="suggestions-list" id="suggestionsList">
+                <!-- Suggestion cards will go here -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Didukung secara gratis oleh <a href="https://languagetool.org" target="_blank" rel="noopener noreferrer">LanguageTool API</a>
+    </footer>
+
+    <script>
+        const textInput = document.getElementById('textInput');
+        const langSelect = document.getElementById('langSelect');
+        const checkBtn = document.getElementById('checkBtn');
+        const spinner = document.getElementById('spinner');
+        const btnText = document.getElementById('btnText');
+        const resultsBox = document.getElementById('resultsBox');
+        const errorBadge = document.getElementById('errorBadge');
+        const highlightedText = document.getElementById('highlightedText');
+        const suggestionsList = document.getElementById('suggestionsList');
+        const fixAllBtn = document.getElementById('fixAllBtn');
+
+        let currentMatches = [];
+
+        checkBtn.addEventListener('click', async () => {
+            const text = textInput.value.trim();
+            if (!text) return;
+
+            // Show loading state
+            checkBtn.disabled = true;
+            spinner.style.display = 'block';
+            btnText.textContent = 'Memeriksa...';
+            resultsBox.style.display = 'none';
+
+            try {
+                const response = await fetch('https://api.languagetool.org/v2/check', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        text: text,
+                        language: langSelect.value
+                    })
+                });
+
+                const data = await response.json();
+                currentMatches = data.matches || [];
+                displayResults(text, currentMatches);
+
+            } catch (error) {
+                console.error('Error checking grammar:', error);
+                alert('Gagal menghubungi server pengecek tata bahasa. Silakan coba lagi.');
+            } finally {
+                // Restore button state
+                checkBtn.disabled = false;
+                spinner.style.display = 'none';
+                btnText.textContent = 'Periksa Teks';
+            }
+        });
+
+        function displayResults(originalText, matches) {
+            resultsBox.style.display = 'block';
+            suggestionsList.innerHTML = '';
+            
+            if (matches.length === 0) {
+                errorBadge.textContent = 'Sempurna!';
+                errorBadge.className = 'badge clean';
+                highlightedText.textContent = originalText;
+                suggestionsList.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">Tidak ditemukan kesalahan tata bahasa atau ejaan!</p>';
+                fixAllBtn.style.display = 'none';
+                return;
+            }
+
+            errorBadge.textContent = `${matches.length} Masalah`;
+            errorBadge.className = 'badge';
+            
+            // Highlight text errors
+            let formattedText = '';
+            let lastIdx = 0;
+            
+            // Sort matches by offset to parse linearly
+            matches.sort((a, b) => a.offset - b.offset);
+
+            matches.forEach((match, idx) => {
+                const start = match.offset;
+                const end = match.offset + match.length;
+                
+                // Append text before match
+                formattedText += escapeHtml(originalText.substring(lastIdx, start));
+                
+                // Append highlighted error
+                const errorWord = originalText.substring(start, end);
+                formattedText += `<span class="error-mark" data-index="${idx}">${escapeHtml(errorWord)}</span>`;
+                
+                lastIdx = end;
+                
+                // Create Suggestion Card
+                createSuggestionCard(match, idx, errorWord);
+            });
+            
+            formattedText += escapeHtml(originalText.substring(lastIdx));
+            highlightedText.innerHTML = formattedText;
+
+            // Show "Fix All" button if there are suggestions
+            const hasReplacements = matches.some(m => m.replacements && m.replacements.length > 0);
+            fixAllBtn.style.display = hasReplacements ? 'block' : 'none';
+        }
+
+        function createSuggestionCard(match, idx, originalWord) {
+            const card = document.createElement('div');
+            card.className = 'suggestion-card';
+
+            const context = document.createElement('div');
+            context.className = 'suggestion-context';
+            context.innerHTML = `Salah: <span>${escapeHtml(originalWord)}</span>`;
+            card.appendChild(context);
+
+            const desc = document.createElement('div');
+            desc.className = 'suggestion-description';
+            desc.textContent = match.message;
+            card.appendChild(desc);
+
+            if (match.replacements && match.replacements.length > 0) {
+                const replacementsContainer = document.createElement('div');
+                replacementsContainer.className = 'suggestion-replacements';
+
+                // Display up to 3 suggestions
+                match.replacements.slice(0, 3).forEach(rep => {
+                    const btn = document.createElement('button');
+                    btn.className = 'replacement-btn';
+                    btn.textContent = rep.value;
+                    btn.addEventListener('click', () => applyCorrection(idx, rep.value));
+                    replacementsContainer.appendChild(btn);
+                });
+                card.appendChild(replacementsContainer);
+            }
+
+            suggestionsList.appendChild(card);
+        }
+
+        function applyCorrection(matchIdx, replacementValue) {
+            const match = currentMatches[matchIdx];
+            const originalText = textInput.value;
+            
+            const start = match.offset;
+            const end = match.offset + match.length;
+            
+            const newText = originalText.substring(0, start) + replacementValue + originalText.substring(end);
+            textInput.value = newText;
+            
+            // Recheck grammar automatically
+            checkBtn.click();
+        }
+
+        // Apply first suggestion for all errors
+        fixAllBtn.addEventListener('click', () => {
+            let text = textInput.value;
+            let offsetAdjustment = 0;
+
+            // Sort matches to apply them from left to right, keeping track of length adjustments
+            const sortedMatches = [...currentMatches].sort((a, b) => a.offset - b.offset);
+
+            sortedMatches.forEach(match => {
+                if (match.replacements && match.replacements.length > 0) {
+                    const replacement = match.replacements[0].value;
+                    const start = match.offset + offsetAdjustment;
+                    const end = start + match.length;
+                    
+                    text = text.substring(0, start) + replacement + text.substring(end);
+                    offsetAdjustment += (replacement.length - match.length);
+                }
+            });
+
+            textInput.value = text;
+            checkBtn.click();
+        });
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
