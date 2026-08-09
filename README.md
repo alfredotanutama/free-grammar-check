@@ -1,6 +1,6 @@
-# 🛠️ AGY Projects by alfredotanutama
+# 🛠️ Projects by alfredotanutama
 
-A collection of web projects built with Antigravity (AGY).
+A collection of web projects.
 
 ---
 
