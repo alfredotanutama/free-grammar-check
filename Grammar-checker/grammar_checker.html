@@ -318,6 +318,14 @@
             color: var(--accent-color);
             text-decoration: none;
         }
+
+        .limitation-note {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-align: center;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
@@ -366,6 +374,8 @@
                 <!-- Suggestion cards will go here -->
             </div>
         </div>
+
+        <p class="limitation-note" id="uiLimitation"></p>
     </div>
 
     <footer id="uiFooter">
@@ -387,7 +397,8 @@
                 issueBadge: "Masalah",
                 perfectBadge: "Sempurna!",
                 noIssues: "Tidak ditemukan kesalahan tata bahasa atau ejaan bahasa Inggris!",
-                labelWrong: "Salah: "
+                labelWrong: "Salah: ",
+                limitation: "⚠️ Alat ini berbasis aturan (LanguageTool), bukan AI. Ia menangkap kesalahan umum, tapi bisa melewatkan kesalahan tata bahasa yang tidak lazim atau jarang terjadi — hasil \"Sempurna\" bukan jaminan 100% benar."
             },
             en: {
                 title: "English Grammar Analyzer",
@@ -401,7 +412,8 @@
                 issueBadge: "Issues",
                 perfectBadge: "Perfect!",
                 noIssues: "No English spelling or grammar errors found!",
-                labelWrong: "Wrong: "
+                labelWrong: "Wrong: ",
+                limitation: "⚠️ This tool is rule-based (LanguageTool), not AI. It catches common mistakes but can miss unusual or rare grammar errors — a \"Perfect\" result isn't a 100% guarantee."
             }
         };
 
@@ -423,6 +435,7 @@
         const uiSubtitle = document.getElementById('uiSubtitle');
         const uiResultsTitle = document.getElementById('uiResultsTitle');
         const uiFooter = document.getElementById('uiFooter');
+        const uiLimitation = document.getElementById('uiLimitation');
 
         // Translate UI Elements
         function translateUI(lang) {
@@ -435,6 +448,7 @@
             uiResultsTitle.textContent = dict.resultsTitle;
             fixAllBtn.textContent = dict.btnFixAll;
             uiFooter.innerHTML = dict.footer;
+            uiLimitation.textContent = dict.limitation;
 
             if (checkBtn.disabled) {
                 btnText.textContent = dict.btnChecking;
@@ -455,12 +469,15 @@
                 switcherBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 const selectedLang = btn.getAttribute('data-ui-lang');
+                localStorage.setItem('uiLang', selectedLang);
                 translateUI(selectedLang);
             });
         });
 
-        // Initialize default UI Language
-        translateUI('id');
+        // Initialize UI Language (remembers last choice)
+        const savedLang = localStorage.getItem('uiLang') || 'id';
+        switcherBtns.forEach(b => b.classList.toggle('active', b.getAttribute('data-ui-lang') === savedLang));
+        translateUI(savedLang);
 
         // Grammar Checking API Call (Locked to English US/UK detection)
         checkBtn.addEventListener('click', async () => {
