@@ -141,20 +141,9 @@
 
         .controls {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
             gap: 1rem;
-        }
-
-        .lang-select {
-            background: rgba(10, 12, 16, 0.8);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 0.6rem 1.2rem;
-            border-radius: 10px;
-            font-family: inherit;
-            outline: none;
-            cursor: pointer;
         }
 
         .btn {
@@ -343,22 +332,16 @@
         </div>
 
         <header>
-            <h1 id="uiTitle">Pembedah Grammar</h1>
-            <p class="subtitle" id="uiSubtitle">Tulis teks Anda di bawah untuk memeriksa ejaan dan struktur tata bahasa secara gratis.</p>
+            <h1 id="uiTitle">Pembedah Grammar Inggris</h1>
+            <p class="subtitle" id="uiSubtitle">Tulis teks bahasa Inggris Anda di bawah untuk memeriksa ejaan dan tata bahasa secara gratis.</p>
         </header>
 
         <div class="checker-section">
             <div class="textarea-container">
-                <textarea id="textInput" placeholder="Masukkan teks Anda di sini (dalam Bahasa Inggris, Indonesia, dll)..."></textarea>
+                <textarea id="textInput" placeholder="Masukkan teks bahasa Inggris Anda di sini..."></textarea>
             </div>
 
             <div class="controls">
-                <select id="langSelect" class="lang-select">
-                    <option value="auto" id="optAuto">Deteksi Otomatis</option>
-                    <option value="en-US" id="optEn">Bahasa Inggris (US)</option>
-                    <option value="id" id="optId">Bahasa Indonesia</option>
-                </select>
-                
                 <button id="checkBtn" class="btn">
                     <span class="loading-spinner" id="spinner"></span>
                     <span id="btnText">Periksa Teks</span>
@@ -390,15 +373,12 @@
     </footer>
 
     <script>
-        // Language Dictionaries for UI Translation
+        // Language Dictionaries for UI Translation (Locked to English checker)
         const translations = {
             id: {
-                title: "Pembedah Grammar",
-                subtitle: "Tulis teks Anda di bawah untuk memeriksa ejaan dan struktur tata bahasa secara gratis.",
-                placeholder: "Masukkan teks Anda di sini (dalam Bahasa Inggris, Indonesia, dll)...",
-                optAuto: "Deteksi Otomatis",
-                optEn: "Bahasa Inggris (US)",
-                optId: "Bahasa Indonesia",
+                title: "Pembedah Grammar Inggris",
+                subtitle: "Tulis teks bahasa Inggris Anda di bawah untuk memeriksa ejaan dan tata bahasa secara gratis.",
+                placeholder: "Masukkan teks bahasa Inggris Anda di sini...",
                 btnCheck: "Periksa Teks",
                 btnChecking: "Memeriksa...",
                 resultsTitle: "Hasil Analisis",
@@ -406,16 +386,13 @@
                 footer: 'Didukung secara gratis oleh <a href="https://languagetool.org" target="_blank" rel="noopener noreferrer">LanguageTool API</a>',
                 issueBadge: "Masalah",
                 perfectBadge: "Sempurna!",
-                noIssues: "Tidak ditemukan kesalahan tata bahasa atau ejaan!",
+                noIssues: "Tidak ditemukan kesalahan tata bahasa atau ejaan bahasa Inggris!",
                 labelWrong: "Salah: "
             },
             en: {
-                title: "Grammar Analyzer",
-                subtitle: "Write your text below to check spelling and grammar structure for free.",
-                placeholder: "Enter your text here (in English, Indonesian, etc)...",
-                optAuto: "Auto Detect",
-                optEn: "English (US)",
-                optId: "Indonesian",
+                title: "English Grammar Analyzer",
+                subtitle: "Write your English text below to check spelling and grammar structure for free.",
+                placeholder: "Enter your English text here...",
                 btnCheck: "Check Text",
                 btnChecking: "Checking...",
                 resultsTitle: "Analysis Results",
@@ -423,7 +400,7 @@
                 footer: 'Powered for free by <a href="https://languagetool.org" target="_blank" rel="noopener noreferrer">LanguageTool API</a>',
                 issueBadge: "Issues",
                 perfectBadge: "Perfect!",
-                noIssues: "No spelling or grammar errors found!",
+                noIssues: "No English spelling or grammar errors found!",
                 labelWrong: "Wrong: "
             }
         };
@@ -432,7 +409,6 @@
         let currentMatches = [];
 
         const textInput = document.getElementById('textInput');
-        const langSelect = document.getElementById('langSelect');
         const checkBtn = document.getElementById('checkBtn');
         const spinner = document.getElementById('spinner');
         const btnText = document.getElementById('btnText');
@@ -445,9 +421,6 @@
         // UI Translation elements
         const uiTitle = document.getElementById('uiTitle');
         const uiSubtitle = document.getElementById('uiSubtitle');
-        const optAuto = document.getElementById('optAuto');
-        const optEn = document.getElementById('optEn');
-        const optId = document.getElementById('optId');
         const uiResultsTitle = document.getElementById('uiResultsTitle');
         const uiFooter = document.getElementById('uiFooter');
 
@@ -459,9 +432,6 @@
             uiTitle.textContent = dict.title;
             uiSubtitle.textContent = dict.subtitle;
             textInput.placeholder = dict.placeholder;
-            optAuto.textContent = dict.optAuto;
-            optEn.textContent = dict.optEn;
-            optId.textContent = dict.optId;
             uiResultsTitle.textContent = dict.resultsTitle;
             fixAllBtn.textContent = dict.btnFixAll;
             uiFooter.innerHTML = dict.footer;
@@ -492,7 +462,7 @@
         // Initialize default UI Language
         translateUI('id');
 
-        // Grammar Checking API Call
+        // Grammar Checking API Call (Locked to English US/UK detection)
         checkBtn.addEventListener('click', async () => {
             const text = textInput.value.trim();
             if (!text) return;
@@ -511,7 +481,7 @@
                     },
                     body: new URLSearchParams({
                         text: text,
-                        language: langSelect.value
+                        language: 'en-US' // Hardcoded to English (US)
                     })
                 });
 
